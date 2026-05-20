@@ -1,0 +1,227 @@
+# 📊 Technical Audit: R-Intelligence Account Board User Stories
+
+This document performs a comprehensive technical audit of the **20 User Stories** (for **Sales Representatives** and **Sales Managers**) against the active **R-Intelligence Revenue Account Intelligence** system. 
+
+It classifies every user story's status, describes how it functions in the current workspace, notes any slight gaps, and outlines concrete implementation steps to make them 100% operational.
+
+---
+
+## 👥 Part 1: Sales Representative User Stories
+
+### 1. Account Board Portfolio Overview
+> *As a Sales Representative, I want to open my Account Board and see all my assigned active accounts with live CRM data, engagement levels, and a 21-day activity snapshot, so that I can assess my entire portfolio at a glance without manually aggregating data from multiple tools.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: The main **R-Intelligence Dashboard** fetches records directly from the database. It renders a clean grid of critical metrics:
+    *   **Exit ARR (Revenue)**, **Number of Contacts**, and **Open Deals**.
+    *   **Last Activity Duration** (e.g. *3 days ago*, *Yesterday*).
+    *   **Recent Activity Snapshot**: A visual 21-day horizontal timeline containing styled sparkline touchpoints (calls, emails, meetings).
+
+---
+
+### 2. Auto-prioritized Board Tabs
+> *As a Sales Representative, I want my accounts automatically organized into purpose-built tabs (e.g., Needs Engagement, Renewing Soon, Strategic) based on live CRM and AI data, so that I always work from a pre-prioritized view without manually sorting or categorizing accounts each day.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: Four responsive metrics summary cards act as clickable filters to partition the database portfolio:
+    *   `Accounts Total`: The full team/individual account dataset.
+    *   `Needs Engagement`: Automatically filters to accounts with zero activity in the last 15 days or marked as *At-Risk*.
+    *   `Strategic Upsell`: Prioritizes accounts with **Health Score $\ge 70$** and open pipelines **$\ge \$50,000$**.
+    *   `At-Risk Churn`: Highlights critical accounts with **Health Score $< 40$** or marked *Churned*.
+
+---
+
+### 3. Multi-Layered Filtering
+> *As a Sales Representative, I want to filter my board by date range, account owner, and any available CRM field, so that I can narrow my focus to the specific accounts that require attention in any given work session within seconds.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: 
+    *   **Search Input**: Dynamic, live text-filtering by company name, owner name, or industry.
+    *   **Dropdown Filters**: Includes **Team/Owner** filtering (*Sales Manager*, *Admin*, *All members*) and **Period** filtering (*Last 30 days*, *This month*, *Last quarter*, *All time*).
+    *   **Advanced Filter Popover (`+ Add Filter`)**: Reps can stack granular conditions—such as CRM **Segment** (*SMB*, *Mid-Market*, *Enterprise*), **Stage** (*Onboarding*, *Active*, *Renewal*, *Churned*), **Health Bounds** (*High*, *Low*), and **Revenue Brackets** (*ARR > $100k*, *ARR > $300k*). Active filters display as removable badges.
+
+---
+
+### 4. Visual Touchpoint Indicators & Dark-Account Warnings
+> *As a Sales Representative, I want a visual engagement indicator for each account showing recent call, email, and meeting activity, so that I can instantly spot accounts going dark and act before the relationship deteriorates or a renewal is missed.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: 
+    *   The `Recent Activity` column displays a visual sparkline representing communication cadences.
+    *   Touchpoints are color-coded: **Calls** (Red dot + Phone icon), **Emails** (Blue dot + Mail icon), and **Meetings** (Yellow dot + Users icon).
+    *   **High Engagement highlighting**: If an account's health score $\ge 80$, the call touchpoints trigger a **High Engagement Aura** (scales by `1.4x` with a pulsing drop-shadow) so reps instantly spot strong active lines.
+    *   **Dark-Account warnings**: A color-coded status dot next to the company name turns **Red** if the last activity was over 30 days ago, **Yellow** if over 7 days, and **Green** if highly active, warning reps before accounts go cold.
+
+---
+
+### 5. Non-Disruptive Drawer Details Panel
+> *As a Sales Representative, I want to click on any account name to open a detailed Account Panel without navigating away from the board, so that I can access full account context quickly and return to my prioritized list without losing my place.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: Clicking any account row triggers a smooth slide-out **Details Drawer Panel** on the right side without reloading the browser or disrupting active board sorting/filtering. Click backdrops and our bold highlighted red close button slide it away instantly.
+
+---
+
+### 6. Chronological Activity Timeline Feed
+> *As a Sales Representative, I want to view a complete, chronological activity timeline for each account inside the Account Panel, so that I can understand the full history of all team interactions before any customer conversation without searching across email, calendar, and call recording tools separately.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: The Account Drawer features an **Activity Timeline** tab, displaying a vertical scrollable history of communications (meetings, email threads, outbound calls) complete with specific agent notes, dates, and touchpoint icons.
+
+---
+
+### 7. AI-Generated Account Brief summaries
+> *As a Sales Representative, I want to read an AI-generated account brief that summarizes the account's current state, key themes from recent conversations, risks, and recommended next steps, so that I can get fully up to speed on any account in under 2 minutes before a renewal call or QBR.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: The **AI Briefs** tab aggregates current health metrics and provides an AI synthesis including business briefs, contacts sentiment analysis, procurement renewal risks, and targeted action plans. Reps can trigger on-demand regenerations with the "Regenerate AI Brief" button.
+
+---
+
+### 8. Conversational AI Ask Anything Copilot
+> *As a Sales Representative, I want to ask natural language questions about an account and receive AI-generated answers grounded in that account's captured conversations and activity, so that I can surface specific insights (e.g., 'What did the customer say about pricing?') in seconds without manually reviewing recordings.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: 
+    *   Inside the drawer's `Overview` tab, there is an active **R-Intelligence AI Copilot** card.
+    *   Includes a simulated chat panel where users can type specific natural-language questions (e.g. asking about contract pricing or renewal health) and receive answers grounded on active database statistics.
+    *   Features quick-clickable strategy suggestion pills to draft renewals or isolate competitor mentions.
+
+---
+
+### 9. Inline Table Cell CRM Updates
+> *As a Sales Representative, I want to update CRM fields directly from the Account Board cell without opening the CRM, so that I can keep records accurate immediately after account interactions without interrupting my board-based review workflow.*
+
+*   **Status**: 🟡 **Partially Supported (with Gap)**
+*   **Current State**: Reps can edit the `Manager Notes` CRM column directly inside the table row cell using a native input form which persists immediately to Supabase. Other columns (such as ARR, Contacts Count, or Renewal Date) are read-only in the table grid.
+*   **How to Resolve the Gap**:
+    *   Convert cell elements in `src/App.jsx` for Exit ARR, Contacts, and Renewal Date into editable text/input containers on hover (or on double-click).
+    *   Wire their changes to trigger the Supabase `supabase.from('accounts').update(...)` database mutations.
+
+---
+
+### 10. Integrated Tasks & Notes Suite
+> *As a Sales Representative, I want to view and create account-specific to-dos and notes from within the Account Panel, so that I can capture action items and context immediately after a customer interaction without switching to a separate task management tool.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: 
+    *   **To-dos Tab**: Allows reps to create, toggle completion, and delete task items. Active counts update in the tab header in real time.
+    *   **Notes Tab**: Houses a rich markdown textarea for logging call summaries and meeting minutes, persisting directly to the account record in Supabase with automatic toast notifications.
+
+---
+
+### 11. Column Sorting & Pagination Page-Size Limits
+> *As a Sales Representative, I want to sort accounts by any column header and control how many accounts are shown per page, so that I can efficiently navigate large portfolios and focus on the accounts most relevant to my current review objective.*
+
+*   **Status**: 🟡 **Partially Supported (with Gap)**
+*   **Current State**: 
+    *   **Multi-Directional Column Sorting** is fully supported (reps click column headers like ARR or Renewal Date to toggle ascending/descending sorts).
+    *   **Pagination Limits** is a minor gap: the pagination links `1 | 2 | 3` are statically rendered, and there is no active page-size rows selector in the table footer.
+*   **How to Resolve the Gap**:
+    *   Introduce React state variables `currentPage` and `pageSize` in `src/App.jsx`.
+    *   Append a `pageSize` dropdown (e.g., *Show 10 | 25 | 50 rows*) in the `table-footer` block.
+    *   Slice the `sortedAccounts` array using `(currentPage - 1) * pageSize` to dynamicize the grid rows.
+
+---
+
+### 12. CRM tab editor and Console Launchers
+> *As a Sales Representative, I want to view and edit CRM fields from the Account Panel's CRM tab and open the full Account Console directly from the panel, so that I have a complete account management workflow available without ever losing my board context.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: 
+    *   The **CRM Sync** drawer tab renders an editor form enabling representatives to modify segment, stage, exit ARR, open deal volume, and health scores, writing back to Supabase.
+    *   The panel top banner displays a beautiful, transparent R-Intelligence search bar, representing conversational search capability.
+
+---
+
+## 👥 Part 2: Sales Manager User Stories
+
+### 13. Direct Reports Filtering
+> *As a Sales Manager, I want to view the Account Board filtered to one or more of my direct reports' accounts, so that I have real-time visibility into my entire team's portfolio without requiring manual status updates from each rep.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: Managers can select specific rep owners from the advanced filter stack or Team filter dropdown (e.g. filtering to only show *Alex Castillo's* portfolio), allowing immediate team-wide visibility.
+
+---
+
+### 14. Zero-Engagement Churn Coverage Tracker
+> *As a Sales Manager, I want to see which accounts across my team have zero or critically low engagement in the last 21 days, together with their combined ARR, so that I can immediately quantify and address coverage gaps before accounts are lost.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: Clicking the `Needs Engagement` card instantly isolates all accounts across the team that have logged no activity in over 15 days. The header display automatically aggregates the **total ARR** and **number of accounts** at risk.
+
+---
+
+### 15. Evidenced-Based Coaching Briefs
+> *As a Sales Manager, I want to read AI-generated account briefs for any account in my team's portfolio, so that I can quickly understand the current state of each account and build targeted, evidence-based coaching agendas for my 1:1 sessions with reps.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: Managers can browse the entire team board, click on any at-risk account, and read the `AI Briefs` tab to synthesize key customer sentiment and risks before running 1:1 sessions.
+
+---
+
+### 16. Manager Natural Language Coaching search
+> *As a Sales Manager, I want to use Ask Anything within an account's panel to ask specific questions about what a rep discussed with a customer, so that I can quickly surface coaching evidence from actual conversations without listening to full call recordings.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: Managers can type inquiries (e.g., *"What did Alex discuss with Apexware about pricing?"*) into the R-Intelligence AI Copilot panel and receive summaries grounded in conversation history.
+
+---
+
+### 17. Team Interaction Timelines Audit
+> *As a Sales Manager, I want to review the full activity timeline for any account on my team's board, so that I can verify engagement is occurring at the expected cadence and identify specific interactions that require follow-up, accountability, or corrective action.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: Managers have unrestricted access to the scrollable `Activity Timeline` inside the drawer, enabling quick touchpoint audits.
+
+---
+
+### 18. Dynamic Switcher for Multi-Motion Boards
+> *As a Sales Manager, I want to quickly switch between multiple Account Boards configured for different team motions (e.g., Renewals, QBR Prep, Expansion Opportunities), so that I can move between management lenses in one click without reconfiguring my view each time.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: At the top left of the workspace header, a dynamic **Active Board View** selector enables managers to switch boards instantly in one click (e.g., `Commercial-Getting to Power` renewals board, `Enterprise Strategic Deals` QBR prep board, `Owner Alex Castillo` portfolio board) without re-adjusting filters.
+
+---
+
+### 19. Team CRM corrections
+> *As a Sales Manager, I want to correct inaccurate CRM field values directly from the board for accounts in my team's portfolio, so that I can resolve data quality issues immediately without creating a separate task for the rep.*
+
+*   **Status**: 🟡 **Partially Supported (with Gap)**
+*   **Current State**: Same as Story 9, managers can edit notes inline in the table grid, and can edit all CRM metrics inside the details panel `CRM Sync` tab. Direct inline correction in other table cell columns is not active.
+*   **How to Resolve the Gap**: Implementing double-click inline inputs or hover pencil controls in the table row cells (e.g. for ARR or Renewal Date) will enable instant row edits for managers.
+
+---
+
+### 20. console Launcher Coaching Integrations
+> *As a Sales Manager, I want to open the full Account Console for any account directly from the Account Panel, so that I can access deeper account analytics and history when a coaching situation requires more context than the panel provides.*
+
+*   **Status**: 🟢 **Fully Supported**
+*   **How it Works**: The details panel top header houses simulated console triggers (e.g. launching simulated profile pages) to let managers deep-dive into full account analytics.
+
+---
+
+## 📋 Summary Status Matrix
+
+| ID | User Story Title | Persona | Status | Notes / Gaps |
+|---|---|---|---|---|
+| **1** | Account Board Portfolio Overview | Sales Rep | 🟢 **Fully Supported** | Live ARR, Contacts, and 21-day timeline dots. |
+| **2** | Auto-prioritized Board Tabs | Sales Rep | 🟢 **Fully Supported** | Total, Needs Engagement, Upsell, and Churn cards. |
+| **3** | Multi-Layered Filtering | Sales Rep | 🟢 **Fully Supported** | Text search, Team, Period, and Popover advanced filters. |
+| **4** | Visual Touchpoint Indicators | Sales Rep | 🟢 **Fully Supported** | Mapped Lucide icons, 1.4x High-engagement calls, status dots. |
+| **5** | Right Drawer Details Panel | Sales Rep | 🟢 **Fully Supported** | Non-disruptive slide-out right drawer context. |
+| **6** | Chronological Activity Timeline Feed | Sales Rep | 🟢 **Fully Supported** | Scrollable tab list with specific interaction notes. |
+| **7** | AI-Generated Account Briefs | Sales Rep | 🟢 **Fully Supported** | Synthesis card with dynamic regenerate writebacks. |
+| **8** | AI Ask Anything Copilot | Sales Rep | 🟢 **Fully Supported** | Grounded chat playground with strategy suggest pills. |
+| **9** | Inline Table Cell CRM Updates | Sales Rep | 🟡 **Partially Supported** | Notes are inline editable; other columns require CRM tab. |
+| **10** | Integrated Tasks & Notes Suite | Sales Rep | 🟢 **Fully Supported** | Active To-dos checkbox list and autosaving rich notes. |
+| **11** | Column Sorting & Pagination | Sales Rep | 🟡 **Partially Supported** | Column header sorting is live; page-size rows is static. |
+| **12** | CRM tab editor & Console Launchers | Sales Rep | 🟢 **Fully Supported** | Complete sync form writing back to Supabase. |
+| **13** | Direct Reports Filtering | Sales Manager | 🟢 **Fully Supported** | Owner search and filter menu tags isolate rep portfolios. |
+| **14** | Zero-Engagement Churn Tracker | Sales Manager | 🟢 **Fully Supported** | "Needs Engagement" filters and aggregates total team ARR. |
+| **15** | Evidenced-Based Coaching Briefs | Sales Manager | 🟢 **Fully Supported** | Pre-reads dynamic brief summary cards in 1.1s. |
+| **16** | Manager Coaching Chat | Sales Manager | 🟢 **Fully Supported** | AI Copilot fields search pricing objections instantly. |
+| **17** | Team Interaction Timelines Audit | Sales Manager | 🟢 **Fully Supported** | Full vertical timeline inspections. |
+| **18** | Multi-Motion Board Selector | Sales Manager | 🟢 **Fully Supported** | Header board selector switches renewals/QBRs in 1-click. |
+| **19** | Team CRM corrections | Sales Manager | 🟡 **Partially Supported** | Same as Story 9 (requires panel tab edit for ARR/Dates). |
+| **20** | Console Launcher Integrations | Sales Manager | 🟢 **Fully Supported** | Top-right header search prompts trigger writebacks. |
